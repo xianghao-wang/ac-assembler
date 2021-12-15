@@ -27,8 +27,8 @@ This assembler is for course [nand2tetirs](https://www.coursera.org/learn/build-
 * **C instruction**
   * grammar: `[destination=]computation[;jump]`
     * `destination`: `A|D|M|AD|AM|DM|ADM`
-    * `computation`: see [Supported Computations and Jump Conditions](#supported-computations-and-jump-conditions)
-    * `jump`: see [Supported Computations and Jump Conditions](#supported-computations-and-jump-conditions)
+    * `computation`: see [Computations](#computations)
+    * `jump`: see [Jump Conditions](#jump-conditions)
   * semantics:
     * load the result of `computation` to `destination`; if the result meets condition `jump`, the address of next instruction will be the one stored in `A`
 
