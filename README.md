@@ -25,7 +25,7 @@ This assembler is for course [nand2tetirs](https://www.coursera.org/learn/build-
     * `value` can be a deciaml integer in `[0,16641)`
     * `value` can be a `label` or `variable` 
 * **C instruction**
-  * grammar: `[destination=]computation[;jump]`
+  * grammar: `(destination=computation(;jump)?)|((destination=)?computation;jump)`
     * `destination`: `A|D|M|AD|AM|DM|ADM`
     * `computation`: see [Computations](#computations)
     * `jump`: see [Jump Conditions](#jump-conditions)
