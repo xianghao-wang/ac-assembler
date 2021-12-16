@@ -82,7 +82,7 @@ public class Main {
 
     private static String toBinary15(int x) {
         String bits = "";
-        while (x / 2 != 0) {
+        while (x != 0) {
             bits = (x % 2) + bits;
             x /= 2;
         }
