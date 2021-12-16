@@ -207,4 +207,11 @@ public class Parser {
     private int lineNumber() {
         return commands.get(idx).lineNumber;
     }
+
+    /**
+     * Go back to the first command
+     * */
+    public void reset() {
+        this.idx = -1;
+    }
 }
