@@ -25,7 +25,7 @@ public class SymbolTable {
         }
     };
     // the beginning address of free memory
-    private static final  int FREE_MEM_BEGIN = 32;
+    private static final  int FREE_MEM_BEGIN = 16;
 
     private int addr; // the current address to be allocated
     private final Map<String, Integer> symbols; // the symbol table
