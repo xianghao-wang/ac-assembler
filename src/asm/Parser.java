@@ -4,7 +4,6 @@ import asm.exceptions.CInstructionException;
 import asm.exceptions.IllegalSymbolException;
 import asm.exceptions.InvalidCommandException;
 
-import javax.swing.undo.CannotUndoException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,7 +27,7 @@ public class Parser {
         }
     }
 
-    private List<Line> commands;
+    private final List<Line> commands;
     private int idx;
 
     /**
@@ -79,15 +78,14 @@ public class Parser {
         String c_pattern = "(.*=.*)|(.*;.*)";
         String l_pattern = "\\(.*\\)";
 
-        Line line = commands.get(idx);
-        if (line.code.matches(a_pattern)) {
+        if (command().matches(a_pattern)) {
             return CommandType.A_COMMAND;
-        } else if (line.code.matches(c_pattern)) {
+        } else if (command().matches(c_pattern)) {
             return CommandType.C_COMMAND;
-        } else if (line.code.matches(l_pattern)) {
+        } else if (command().matches(l_pattern)) {
             return CommandType.L_COMMAND;
         } else {
-            throw new InvalidCommandException("Line " + line.lineNumber + ": invalid command \"" + line.code + "\".");
+            throw new InvalidCommandException("Line " + lineNumber() + ": invalid command \"" + command() + "\".");
         }
     }
 
@@ -98,13 +96,11 @@ public class Parser {
      * */
     public String symbol() throws IllegalSymbolException {
         String symbol_pattern = "[_a-zA-Z]+[0-9]*[_a-zA-Z]*";
-        Line line = commands.get(idx);
-        String command = line.code;
 
         try {
             switch (commandType()) {
                 case A_COMMAND -> {
-                    String value = command.substring(1);
+                    String value = command().substring(1);
 
                     // the value is deciaml
                     if (value.matches("[0-9]+")) {
@@ -117,16 +113,16 @@ public class Parser {
                     }
 
                     // non-sense value
-                    throw new IllegalSymbolException(line.lineNumber, value);
+                    throw new IllegalSymbolException(lineNumber(), value);
                 }
 
                 case L_COMMAND -> {
-                    String symbol = command.substring(1, command.length() - 1);
+                    String symbol = command().substring(1, command().length() - 1);
                     if (symbol.matches(symbol_pattern)) {
                         return symbol;
                     }
 
-                    throw new IllegalSymbolException(line.lineNumber, symbol);
+                    throw new IllegalSymbolException(lineNumber(), symbol);
                 }
             }
         } catch (InvalidCommandException e) {
