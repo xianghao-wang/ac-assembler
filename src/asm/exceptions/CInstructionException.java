@@ -1,7 +1,7 @@
 package asm.exceptions;
 
-public class CInstructionException extends Exception {
+public class CInstructionException extends InstructionException {
     public CInstructionException(int lineNumber, String part, String actual) {
-        super(String.format("Line %d: \"%s\" is illegal %s of C instruction.", lineNumber, actual, part));
+        super(lineNumber, String.format("\"%s\" is illegal %s of C instruction.", actual, part));
     }
 }
