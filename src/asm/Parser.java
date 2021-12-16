@@ -95,7 +95,8 @@ public class Parser {
      * @return the symbol
      * */
     public String symbol() throws IllegalSymbolException {
-        String symbol_pattern = "[_a-zA-Z]+[0-9]*[_a-zA-Z]*";
+        String number_pattern = "[0-9]+";
+        String not_label_pattern = "[0-9]*";
 
         try {
             switch (commandType()) {
@@ -103,12 +104,12 @@ public class Parser {
                     String value = command().substring(1);
 
                     // the value is deciaml
-                    if (value.matches("[0-9]+")) {
+                    if (value.matches(number_pattern)) {
                         return value;
                     }
 
                     // the value is symbol
-                    if (value.matches(symbol_pattern)) {
+                    if (!value.matches(not_label_pattern)) {
                         return value;
                     }
 
@@ -118,11 +119,11 @@ public class Parser {
 
                 case L_COMMAND -> {
                     String symbol = command().substring(1, command().length() - 1);
-                    if (symbol.matches(symbol_pattern)) {
-                        return symbol;
+                    if (symbol.matches(not_label_pattern)) {
+                        throw new IllegalSymbolException(lineNumber(), symbol);
                     }
 
-                    throw new IllegalSymbolException(lineNumber(), symbol);
+                    return symbol;
                 }
             }
         } catch (InvalidCommandException e) {
@@ -138,7 +139,7 @@ public class Parser {
      * @throws CInstructionException the destinantion is illegal
      * */
     public String dest() throws CInstructionException {
-        String dest_pattern = "A|D|M|(AD)|(DM)|(AM)|(ADM)";
+        String dest_pattern = "A|D|M|(AD)|(MD)|(AM)|(AMD)";
         if (command().contains("=")) {
             String[] pieces = command().split("=");
             String destination = pieces[0];
@@ -197,14 +198,14 @@ public class Parser {
      * Get the string of this command
      * @return the command
      * */
-    private String command() {
+    public String command() {
         return commands.get(idx).code;
     }
 
     /**
      * Get the current line number
      * */
-    private int lineNumber() {
+    public int lineNumber() {
         return commands.get(idx).lineNumber;
     }
 
