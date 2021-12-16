@@ -70,7 +70,7 @@ public class Main {
                 output.add("0" + toBinary15(address));
 
             } else if (parser.commandType() == Parser.CommandType.C_COMMAND) {
-                String a = parser.command().contains("M") ? "1" : "0";
+                String a = parser.comp().contains("M") ? "1" : "0";
                 output.add(
                         "111" + a + code.comp(parser.comp()) + code.dest(parser.dest()) + code.jump(parser.jump())
                 );
