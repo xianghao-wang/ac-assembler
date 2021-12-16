@@ -4,6 +4,7 @@ import asm.exceptions.CInstructionException;
 import asm.exceptions.IllegalSymbolException;
 import asm.exceptions.InvalidCommandException;
 
+import javax.swing.undo.CannotUndoException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -152,6 +153,26 @@ public class Parser {
             }
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Get the computation of C instruction
+     * @return the computation
+     * @throws CInstructionException  the computation is illegal
+     * */
+    public String comp() throws CInstructionException {
+        String comp_pattern = "0|1|(-1)|A|D|M|(!A)|(!D)|(!M)|(-A)|(-D)|(-M)|" +
+                "([ADM][+-]1)|" +
+                "(D[&|+-][AM])|" +
+                "([AM][&|+-]D)";
+        String remove_extra = "(.*=)|(;.*)";
+        String computation = command().replaceAll(remove_extra, "");
+
+        if (computation.matches(comp_pattern)) {
+            return computation;
+        } else {
+            throw new CInstructionException(lineNumber(), "computation", computation);
         }
     }
 
