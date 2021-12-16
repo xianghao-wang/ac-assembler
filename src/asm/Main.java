@@ -92,13 +92,22 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.out.println("Usage: java -jar assemble.jar <input_file> <output_file>");
+        String usage = "Usage: java -jar assemble.jar <input_file.asm>";
+        String src;
+        String des;
+        if (args.length == 0) {
+            System.out.println(usage);
             return;
+        } else {
+            src = args[0];
+            if (src.matches(".*\\.asm")) {
+                des = src.substring(0, src.length() - 4) + ".hack";
+            } else {
+                System.out.println(usage);
+                return;
+            }
         }
 
-        String src = args[0];
-        String des = args[1];
         List<String> lines = read(src);
         List<String> ouput = assemble(lines);
         write(ouput, des);
