@@ -3,11 +3,16 @@ This is an assembler for A-instruction and C-instruction.
 
 This assembler is for course [nand2tetirs](https://www.coursera.org/learn/build-a-computer/home/welcome) programming assignment.
 
+# Usage
+* `java -jar assemble.jar file.asm`
+* The input file path should end with **.asm**
+* The target file will end with **.hack**
+
 # Manual - Specifications
 * **A register** `A`: the register holding an address
 * **D register** `D`: the register holding data
 * **M register** `M`: the virtual register holding the data in memory located by A register
-* **symbol**: the string representing variable or label `[_a-zA-Z]+[0-9]*[_a-zA-Z]*`
+* **symbol**: the string representing variable or label; it should not be a string of which all characters are digits
 
 # Manual - Instructions and Grammars
 * **Comment**
