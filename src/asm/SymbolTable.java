@@ -68,6 +68,6 @@ public class SymbolTable {
      * @param symbol the symbol
      * */
     public void addEntry(String symbol) {
-        addEntry(symbol, addr);
+        addEntry(symbol, addr ++);
     }
 }
