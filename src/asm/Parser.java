@@ -138,7 +138,7 @@ public class Parser {
 
     /**
      * Get the destination of C instruction
-     * @return the destination; if no destination, return an empty string
+     * @return the destination; if no destination, return null
      * @throws CInstructionException the destinantion is illegal
      * */
     public String dest() throws CInstructionException {
@@ -152,7 +152,7 @@ public class Parser {
                 throw new CInstructionException(lineNumber(), "destination", destination);
             }
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -173,6 +173,27 @@ public class Parser {
             return computation;
         } else {
             throw new CInstructionException(lineNumber(), "computation", computation);
+        }
+    }
+
+    /**
+     * Get the jump of C instruction
+     * @return the jump
+     * @throws CInstructionException  the jump is illegal
+     * */
+    public String jump() throws CInstructionException {
+        String jump_pattern = "(JMP)|(JEQ)|(JNE)|(JGT)|(JGE)|(JLT)|(JLE)";
+
+        if (command().contains(";")) {
+            String[] pieces = command().split(";");
+            String jump = pieces[1];
+            if (jump.matches(jump_pattern)) {
+                return jump;
+            } else {
+                throw new CInstructionException(lineNumber(), "jump", jump);
+            }
+        } else {
+            return null;
         }
     }
 
