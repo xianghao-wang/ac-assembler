@@ -118,8 +118,8 @@ public class Parser {
                     return value;
                 }
 
-                // non-sense value
-                throw new InstructionException(lineNumber(), value);
+                // empty value
+                throw new InstructionException(lineNumber(), "\"@\" need to be followd by a symbol or address");
             }
 
             case L_COMMAND -> {
