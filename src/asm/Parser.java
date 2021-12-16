@@ -1,8 +1,8 @@
 package asm;
 
+import asm.exceptions.AInstructionException;
 import asm.exceptions.CInstructionException;
-import asm.exceptions.IllegalSymbolException;
-import asm.exceptions.InvalidCommandException;
+import asm.exceptions.InstructionException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 /**
  * The class for parsing the assembly source codes
- * */
+ */
 public class Parser {
     public enum CommandType {
         A_COMMAND,
@@ -21,6 +21,7 @@ public class Parser {
     private static class Line {
         int lineNumber;
         String code;
+
         Line(int lineNumber, String code) {
             this.lineNumber = lineNumber;
             this.code = code;
@@ -32,8 +33,9 @@ public class Parser {
 
     /**
      * Construct a parser for assembly code
+     *
      * @param source the lines of codes
-     * */
+     */
     public Parser(List<String> source) {
         // filter all of meaningless lines
         this.commands = IntStream.rangeClosed(1, source.size())
@@ -46,8 +48,9 @@ public class Parser {
 
     /**
      * Clean a line of code by removing white characters and comments
+     *
      * @param s the code
-     * */
+     */
     private String clean(String s) {
         return s.replaceAll("\s", "")
                 .replaceAll("//.*", "");
@@ -55,25 +58,27 @@ public class Parser {
 
     /**
      * Check whether there are more commands
+     *
      * @return true if there are more commands for parsing; otherwise, false
-     * */
+     */
     public boolean hasMoreCommands() {
         return idx < commands.size() - 1;
     }
 
     /**
      * Move to the next command
-     * */
+     */
     public void advance() {
         this.idx += 1;
     }
 
     /**
      * Get the type of the current command
+     *
      * @return return A_COMMAND if it is an A instruction; return C_COMMAND if it is a C instruction; return L_COMMAND if it is a label
-     * @throws InvalidCommandException detecting an invalid command
-     * */
-    public CommandType commandType() throws InvalidCommandException {
+     * @throws InstructionException detecting an invalid command
+     */
+    public CommandType commandType() throws InstructionException {
         String a_pattern = "@.*";
         String c_pattern = "(.*=.*)|(.*;.*)";
         String l_pattern = "\\(.*\\)";
@@ -85,49 +90,46 @@ public class Parser {
         } else if (command().matches(l_pattern)) {
             return CommandType.L_COMMAND;
         } else {
-            throw new InvalidCommandException("Line " + lineNumber() + ": invalid command \"" + command() + "\".");
+            throw new InstructionException(lineNumber(), "invalid command \"" + command() + "\".");
         }
     }
 
     /**
      * Get the symbol of A_COMMAND i.e. @value or L_COMMAND i.e. (label)
      * This command can be only applied to the command of A_COMMAND or L_COMMAND type
+     *
      * @return the symbol
-     * */
-    public String symbol() throws IllegalSymbolException {
+     */
+    public String symbol() throws InstructionException {
         String number_pattern = "[0-9]+";
         String not_label_pattern = "[0-9]*";
 
-        try {
-            switch (commandType()) {
-                case A_COMMAND -> {
-                    String value = command().substring(1);
+        switch (commandType()) {
+            case A_COMMAND -> {
+                String value = command().substring(1);
 
-                    // the value is deciaml
-                    if (value.matches(number_pattern)) {
-                        return value;
-                    }
-
-                    // the value is symbol
-                    if (!value.matches(not_label_pattern)) {
-                        return value;
-                    }
-
-                    // non-sense value
-                    throw new IllegalSymbolException(lineNumber(), value);
+                // the value is deciaml
+                if (value.matches(number_pattern)) {
+                    return value;
                 }
 
-                case L_COMMAND -> {
-                    String symbol = command().substring(1, command().length() - 1);
-                    if (symbol.matches(not_label_pattern)) {
-                        throw new IllegalSymbolException(lineNumber(), symbol);
-                    }
-
-                    return symbol;
+                // the value is symbol
+                if (!value.matches(not_label_pattern)) {
+                    return value;
                 }
+
+                // non-sense value
+                throw new InstructionException(lineNumber(), value);
             }
-        } catch (InvalidCommandException e) {
-            e.printStackTrace();
+
+            case L_COMMAND -> {
+                String symbol = command().substring(1, command().length() - 1);
+                if (symbol.matches(not_label_pattern)) {
+                    throw new InstructionException(lineNumber(), "label " + "\"" + symbol + "\" is repeated.");
+                }
+
+                return symbol;
+            }
         }
 
         return null;
@@ -135,9 +137,10 @@ public class Parser {
 
     /**
      * Get the destination of C instruction
+     *
      * @return the destination; if no destination, return null
      * @throws CInstructionException the destinantion is illegal
-     * */
+     */
     public String dest() throws CInstructionException {
         String dest_pattern = "A|D|M|(AD)|(MD)|(AM)|(AMD)";
         if (command().contains("=")) {
@@ -155,9 +158,10 @@ public class Parser {
 
     /**
      * Get the computation of C instruction
+     *
      * @return the computation
-     * @throws CInstructionException  the computation is illegal
-     * */
+     * @throws CInstructionException the computation is illegal
+     */
     public String comp() throws CInstructionException {
         String comp_pattern = "0|1|(-1)|A|D|M|(!A)|(!D)|(!M)|(-A)|(-D)|(-M)|" +
                 "([ADM][+-]1)|" +
@@ -175,9 +179,10 @@ public class Parser {
 
     /**
      * Get the jump of C instruction
+     *
      * @return the jump
-     * @throws CInstructionException  the jump is illegal
-     * */
+     * @throws CInstructionException the jump is illegal
+     */
     public String jump() throws CInstructionException {
         String jump_pattern = "(JMP)|(JEQ)|(JNE)|(JGT)|(JGE)|(JLT)|(JLE)";
 
@@ -196,22 +201,23 @@ public class Parser {
 
     /**
      * Get the string of this command
+     *
      * @return the command
-     * */
+     */
     public String command() {
         return commands.get(idx).code;
     }
 
     /**
      * Get the current line number
-     * */
+     */
     public int lineNumber() {
         return commands.get(idx).lineNumber;
     }
 
     /**
      * Go back to the first command
-     * */
+     */
     public void reset() {
         this.idx = -1;
     }

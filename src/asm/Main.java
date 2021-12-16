@@ -1,8 +1,6 @@
 package asm;
 
-import asm.exceptions.IllegalSymbolException;
 import asm.exceptions.InstructionException;
-import asm.exceptions.InvalidCommandException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ public class Main {
         }
     }
 
-    private static List<String> assemble(List<String> lines) throws InstructionException, InvalidCommandException, IllegalSymbolException {
+    private static List<String> assemble(List<String> lines) throws InstructionException {
         Parser parser = new Parser(lines);
         Code code = new Code();
         SymbolTable symbolTable = new SymbolTable();
