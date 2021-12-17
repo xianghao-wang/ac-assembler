@@ -32,7 +32,7 @@ This assembler is for course [nand2tetirs](https://www.coursera.org/learn/build-
     * `<value>` can be a `label` or `variable` 
 * **C instruction**
   * grammar: `<destination>=<computation>[;<jump>]` or `[<destination>=]<computation>;<jump>`
-    * `<destination>`: `A|D|M|AD|AM|DM|ADM`
+    * `<destination>`: `A|D|M|AD|AM|MD|ADM`
     * `<computation>`: see [Computations](#computations)
     * `<jump>`: see [Jump Conditions](#jump-conditions)
   * semantics:
